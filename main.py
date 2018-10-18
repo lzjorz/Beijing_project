@@ -39,7 +39,7 @@ summer_model_file=folder_path+"/summer_model.sav"
 other_model_file=folder_path+"/other_model.sav"
 file_path_run_model=folder_path+"/predict_data.csv"
 data_scaler_file=folder_path+"/model_data.csv"
-
+result_file = folder_path+"/result_data.csv"
 
 #根据温度来判断日期
 def temperature_judge_sdate(data):
@@ -196,7 +196,12 @@ def run_the_model():
 	print "每日用电量的预测结果"
 	print predictions
 	print "总电量为",predictions.sum()
-	
+	#将预测结果写入文件中
+	new_df=pd.DataFrame()
+	new_df['SDATE'] = dataset['SDATE']
+	new_df['YL'] = predictions
+	new_df.ix[-1] = pd.Series(['YL_SUM',predictions.sum()],index=new_df.columns)
+	new_df.to_csv(result_file,index=False)
 	#画图
 	date_data = dataset['SDATE']
 	dates = pd.DatetimeIndex(date_data)

@@ -2,7 +2,7 @@
 # -*- coding: UTF-8 -*-
 
 #文件夹路径，只需要修改此路径即可
-folder_path="D:\Beijing_project/code"
+folder_path="."
 # 设置季度转化的温度
 #夏入秋的临界温度
 temperature_summer_to_autumn=28
