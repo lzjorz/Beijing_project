@@ -41,6 +41,7 @@ file_path_run_model=folder_path+"/predict_data.csv"
 data_scaler_file=folder_path+"/model_data.csv"
 result_file = folder_path+"/result_data.csv"
 
+#得到对应月份的最大功率
 def get_month_p_max(month_number):
 	if month_number==9:
 		return 1626.01
@@ -62,7 +63,7 @@ def get_month_p_max(month_number):
 		grouped = data_all['P_MAX'].groupby([data_all['month'], data_all['year']])
 		grouped_p_max_month_year = grouped.max()
 		grouped_p_max_month = grouped_p_max_month_year.groupby('month').mean()
-		return grouped_p_max_month[month_number]
+		return grouped_p_max_month[month_number]+np.random.random()
 
 #根据温度来判断日期
 def temperature_judge_sdate(data):
