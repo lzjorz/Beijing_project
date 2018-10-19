@@ -41,6 +41,29 @@ file_path_run_model=folder_path+"/predict_data.csv"
 data_scaler_file=folder_path+"/model_data.csv"
 result_file = folder_path+"/result_data.csv"
 
+def get_month_p_max(month_number):
+	if month_number==9:
+		return 1626.01
+	elif month_number==10:
+		return 860.27
+	else:
+		try:
+			data_all = pd.read_csv('d://Beijing_project/code/data_all.csv')
+		except:
+			print "读取功率总文件失败"
+		data_all['SDATE'] = pd.to_datetime(data_all['SDATE'])
+		month = []
+		year = []
+		for i in range(0, len(data_all['SDATE'])):
+			month.append(data_all['SDATE'][i].month)
+			year.append(data_all['SDATE'][i].year)
+		data_all['month'] = month
+		data_all['year'] = year
+		grouped = data_all['P_MAX'].groupby([data_all['month'], data_all['year']])
+		grouped_p_max_month_year = grouped.max()
+		grouped_p_max_month = grouped_p_max_month_year.groupby('month').mean()
+		return grouped_p_max_month[month_number]
+
 #根据温度来判断日期
 def temperature_judge_sdate(data):
 	data['SDATE'] = pd.to_datetime(data['SDATE'])
@@ -142,9 +165,7 @@ def run_the_model():
 	print "春冬模型请输入2"
 	print "夏秋换季模型请输入3"
 	print "春夏换季模型请输入4"
-	#此处初始化，防止部分时间不符合要求而导致无结果
-	summer_to_autumn_date = '2018/9/10'
-	spring_to_summer_date = '2018/5/20'
+
 	#输入选择
 	choose_model_number=input()
 	if choose_model_number == 1:
@@ -193,9 +214,15 @@ def run_the_model():
 		print "输入数字错误，系统退出"
 		sys.exit()
 	
+	#得到功率最大值
+	dataset['SDATE']=pd.to_datetime(dataset['SDATE'])
+	p_max=get_month_p_max(dataset['SDATE'][5].month)
+	
+	print "最大功率为",p_max,"KW"
 	print "每日用电量的预测结果"
 	print predictions
 	print "总电量为",predictions.sum()
+	
 	#将预测结果写入文件中
 	new_df=pd.DataFrame()
 	new_df['SDATE'] = dataset['SDATE']
