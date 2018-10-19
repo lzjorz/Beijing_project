@@ -63,7 +63,7 @@ def get_month_p_max(month_number):
 		grouped = data_all['P_MAX'].groupby([data_all['month'], data_all['year']])
 		grouped_p_max_month_year = grouped.max()
 		grouped_p_max_month = grouped_p_max_month_year.groupby('month').mean()
-		return grouped_p_max_month[month_number]+np.random.random()
+		return round(grouped_p_max_month[month_number]+np.random.random(),2)
 
 #根据温度来判断日期
 def temperature_judge_sdate(data):
