@@ -153,14 +153,14 @@ def run_the_model():
 	X_scaler_summer = data_scaler_summer.drop(['SDATE', 'P_MAX', 'P_MIN', 'P_AVG', 'YL_MAX'], axis=1)
 	X_scaler_other = data_scaler_other.drop(['SDATE', 'P_MAX', 'P_MIN', 'P_AVG', 'YL_MAX'], axis=1)
 	X_scaler_summer = X_scaler_summer[
-		['IsHoliday', 'temperature_min', 'temperature_max', 'temperature_avg', 'IsHeating', 'week_year','IsSpringFestival']]
+		['IsHoliday', 'temperature_min', 'temperature_max', 'temperature_avg', 'IsHeating', 'week_year','IsSpringFestival','weekday']]
 	X_scaler_other = X_scaler_other[
-		['IsHoliday', 'temperature_min', 'temperature_max', 'temperature_avg', 'IsHeating', 'week_year','IsSpringFestival']]
+		['IsHoliday', 'temperature_min', 'temperature_max', 'temperature_avg', 'IsHeating', 'week_year','IsSpringFestival','weekday']]
 	scaler_summer=StandardScaler().fit(X_scaler_summer)
 	scaler_other = StandardScaler().fit(X_scaler_other)
 	validation=dataset
 	X_validation = validation[
-		['IsHoliday', 'temperature_min', 'temperature_max', 'temperature_avg', 'IsHeating', 'week_year','IsSpringFestival']]
+		['IsHoliday', 'temperature_min', 'temperature_max', 'temperature_avg', 'IsHeating', 'week_year','IsSpringFestival','weekday']]
 	
 	print "夏季模型请输入1"
 	print "春冬模型请输入2"
@@ -181,12 +181,12 @@ def run_the_model():
 		summer_to_autumn_date=temperature_judge_sdate(dataset)
 		print "夏季到秋季关空调的时间为", summer_to_autumn_date
 		validation['SDATE'] = pd.to_datetime(validation['SDATE'])
-		validation_summer = validation[validation['SDATE'] <= pd.to_datetime(summer_to_autumn_date)]
-		validation_other = validation[validation['SDATE'] > pd.to_datetime(summer_to_autumn_date)]
+		validation_summer = validation[validation['SDATE'] < pd.to_datetime(summer_to_autumn_date)]
+		validation_other = validation[validation['SDATE'] >= pd.to_datetime(summer_to_autumn_date)]
 		X_summer_validation = validation_summer[
-			['IsHoliday', 'temperature_min', 'temperature_max', 'temperature_avg', 'IsHeating', 'week_year','IsSpringFestival']]
+			['IsHoliday', 'temperature_min', 'temperature_max', 'temperature_avg', 'IsHeating', 'week_year','IsSpringFestival','weekday']]
 		X_other_validation = validation_other[
-			['IsHoliday', 'temperature_min', 'temperature_max', 'temperature_avg', 'IsHeating', 'week_year','IsSpringFestival']]
+			['IsHoliday', 'temperature_min', 'temperature_max', 'temperature_avg', 'IsHeating', 'week_year','IsSpringFestival','weekday']]
 		model_summer=load_summer_model()
 		rescaledX_validation_summer = scaler_summer.transform(X_summer_validation)
 		predictions_summer=model_summer.predict(rescaledX_validation_summer)
@@ -201,9 +201,9 @@ def run_the_model():
 		validation_summer = validation[validation['SDATE'] >= pd.to_datetime(spring_to_summer_date)]
 		validation_other = validation[validation['SDATE'] < pd.to_datetime(spring_to_summer_date)]
 		X_summer_validation = validation_summer[
-			['IsHoliday', 'temperature_min', 'temperature_max', 'temperature_avg', 'IsHeating', 'week_year','IsSpringFestival']]
+			['IsHoliday', 'temperature_min', 'temperature_max', 'temperature_avg', 'IsHeating', 'week_year','IsSpringFestival','weekday']]
 		X_other_validation = validation_other[
-			['IsHoliday', 'temperature_min', 'temperature_max', 'temperature_avg', 'IsHeating', 'week_year','IsSpringFestival']]
+			['IsHoliday', 'temperature_min', 'temperature_max', 'temperature_avg', 'IsHeating', 'week_year','IsSpringFestival','weekday']]
 		model_summer=load_summer_model()
 		rescaledX_validation_summer = scaler_summer.transform(X_summer_validation)
 		predictions_summer=model_summer.predict(rescaledX_validation_summer)

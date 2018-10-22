@@ -29,6 +29,8 @@ other_model_file = file_path+"/other_model.sav"
 data_scaler_file = file_path+"/model_data.csv"
 #历史放假文件
 data_holiday_history = file_path+"/data_all_holiday.csv"
+#预测结果文件
+result_file=file_path+"/result_data.csv"
 
 #绘图
 def show_picture(predictions,date_data):
@@ -67,8 +69,8 @@ def model_standand(data_scaler):
         #data_scaler_other = data_scaler[data_scaler['SDATE'] < pd.to_datetime('2018/5/31')]
         X_scaler_summer = data_scaler_summer.drop(['SDATE', 'P_MAX', 'P_MIN', 'P_AVG', 'YL_MAX'], axis=1)
         X_scaler_other = data_scaler_other.drop(['SDATE', 'P_MAX', 'P_MIN', 'P_AVG', 'YL_MAX'], axis=1)
-        X_scaler_summer = X_scaler_summer[['IsHoliday', 'temperature_min', 'temperature_max', 'temperature_avg', 'IsHeating', 'week_year','IsSpringFestival']]
-        X_scaler_other = X_scaler_other[['IsHoliday', 'temperature_min', 'temperature_max', 'temperature_avg', 'IsHeating', 'week_year','IsSpringFestival']]
+        X_scaler_summer = X_scaler_summer[['IsHoliday', 'temperature_min', 'temperature_max', 'temperature_avg', 'IsHeating', 'week_year','IsSpringFestival','weekday']]
+        X_scaler_other = X_scaler_other[['IsHoliday', 'temperature_min', 'temperature_max', 'temperature_avg', 'IsHeating', 'week_year','IsSpringFestival','weekday']]
         scaler_summer=StandardScaler().fit(X_scaler_summer)
         scaler_other = StandardScaler().fit(X_scaler_other)
         return scaler_summer,scaler_other
@@ -81,7 +83,7 @@ def model_standand(data_scaler):
 def model_predict(model_file,data,IsSummer,data_scaler_file):
     data_scaler = pd.read_csv(data_scaler_file)
     scaler_summer,scaler_other = model_standand(data_scaler)
-    X_predict = data[['IsHoliday', 'temperature_min', 'temperature_max', 'temperature_avg', 'IsHeating', 'week_year','IsSpringFestival']]
+    X_predict = data[['IsHoliday', 'temperature_min', 'temperature_max', 'temperature_avg', 'IsHeating', 'week_year','IsSpringFestival','weekday']]
     try:
         with open(model_file,'rb') as model_f:
             loaded_model = load(model_f)
@@ -251,6 +253,12 @@ def correct_YL():
             print "每日用电量的预测结果："
             print result
             print "总用电量:",sum(result)
+            # 将预测结果写入文件中
+            new_df = pd.DataFrame()
+            new_df['SDATE'] = data['SDATE']
+            new_df['YL'] = result
+            new_df.ix[-1] = pd.Series(['YL_SUM', result.sum()], index=new_df.columns)
+            new_df.to_csv(result_file, index=False)
             show_picture(result,data['SDATE'])
     elif choose_num == 2:
         data = pd.read_csv(predict_file)
@@ -261,6 +269,12 @@ def correct_YL():
             print "每日用电量的预测结果："
             print result
             print "总用电量:",sum(result)
+            # 将预测结果写入文件中
+            new_df = pd.DataFrame()
+            new_df['SDATE'] = data['SDATE']
+            new_df['YL'] = result
+            new_df.ix[-1] = pd.Series(['YL_SUM', result.sum()], index=new_df.columns)
+            new_df.to_csv(result_file, index=False)
             show_picture(result, data['SDATE'])
     elif choose_num == 3:
         data = pd.read_csv(predict_file)
@@ -271,6 +285,12 @@ def correct_YL():
             print "每日用电量的预测结果："
             print result
             print "总用电量:", sum(result)
+            # 将预测结果写入文件中
+            new_df = pd.DataFrame()
+            new_df['SDATE'] = data['SDATE']
+            new_df['YL'] = result
+            new_df.ix[-1] = pd.Series(['YL_SUM', result.sum()], index=new_df.columns)
+            new_df.to_csv(result_file, index=False)
             show_picture(result, data['SDATE'])
     else:
         print "输入的字符有误"

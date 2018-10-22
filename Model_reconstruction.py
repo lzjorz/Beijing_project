@@ -408,6 +408,13 @@ def set_week_year(data):
 		result.append(dt.date(temp.year,temp.month,temp.day).isocalendar()[1])
 	return result
 
+#设置weekday
+def set_weekday(data):
+    result = []
+    data['SDATE'] = pd.to_datetime(data['SDATE'])
+    for temp in data['SDATE']:
+        result.append(dt.date.isoweekday(dt.datetime(temp.year,temp.month,temp.day)))
+    return result
 
 # 4级设备每天数据的合并
 def merge_all_data(df_temperature):
@@ -424,6 +431,7 @@ def merge_all_data(df_temperature):
     data_all['SDATE'] = convert_date(data_all)
     data_all['week_year'] = set_week_year(data_all)
     data_all['IsHeating'] = set_isHeating(file_level5_split_day_path,heating_file_list)
+    data_all['weekday'] = set_week_year(data_all)
     df_temperature['SDATE'] = pd.to_datetime(df_temperature['SDATE'])
     data_temp = pd.merge(data_all,df_temperature,on=['SDATE'])
     data_all['temperature_max'] = data_temp['temperature_max']
@@ -614,8 +622,8 @@ def model_reconstruction():
     except:
         print "爬虫失败"
     deal_data(data, df_temperature)
-    summer_model_select()
-    other_model_select()
+    # summer_model_select()
+    # other_model_select()
     #model_select()
 
 if __name__ == '__main__':

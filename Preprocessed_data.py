@@ -122,6 +122,13 @@ def set_week_year(data):
 		result.append(dt.date(temp.year,temp.month,temp.day).isocalendar()[1])
 	return result
 
+#设置weekday参数
+def set_weekday(data):
+    result = []
+    data['SDATE'] = pd.to_datetime(data['SDATE'])
+    for temp in data['SDATE']:
+        result.append(dt.date.isoweekday(dt.datetime(temp.year,temp.month,temp.day)))
+    return result
 
 
 
@@ -272,6 +279,7 @@ def preprocfessed_data():
 	final_df=pd.merge(holiday_df,df_temperature_report,on=['SDATE'])
 	final_df['IsHeating']=set_isHeating(final_df)
 	final_df['week_year']=set_week_year(final_df)
+	final_df['weekday']=set_weekday(final_df)
 	print "数据合并完毕"
 	final_df.to_csv(file_path,index=False)
 	print "数据输出完毕"
