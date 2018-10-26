@@ -52,10 +52,10 @@ def file_name(file_dir):
     #         print(dirs) #当前路径下所有子目录
             for temp in files:
                 file_list.append(root+'/'+temp)
-        print "获取指定文件夹中的文件名成功"
+        print u"获取指定文件夹中的文件名成功"
         #print file_list[-1]
     except:
-        print("获取指定文件夹中文件名失败")
+        print u"获取指定文件夹中文件名失败"
     return file_list
 
 #读取文件并将文件合并为一个文件
@@ -66,11 +66,11 @@ def file_read():
         try:
             bjcx_list.append(read_csv(file_path))
         except:
-            print "文件"+file_path+"读取失败"
+            print u"文件"+file_path+u"读取失败"
             sys.exit()
     bjcx = pd.concat(bjcx_list, axis=0,sort=False)
     #print bjcx.tail(5)
-    print "数据合并完毕"
+    print u"数据合并完毕"
     return bjcx
 
 #数据切分与处理
@@ -82,7 +82,7 @@ def data_original_segmentation(bjcx):
         try:
             group.to_csv(file_split_path + str(name) + '.csv', index=False)
         except:
-            print name,"分割失败"
+            print name,u"分割失败"
             sys.exit()
     return 1
 
@@ -321,9 +321,9 @@ def crawler():
                 #print new_df.tail(5)
                 filename = "data_temperature_" + str(date) + ".csv"
                 new_df.to_csv(file_temperature_path +str(filename), index=False)
-                print date,"温度数据爬取成功"
+                print date,u"温度数据爬取成功"
             except:
-                print date,"温度数据爬取失败"
+                print date,u"温度数据爬取失败"
     # 温度数据的综合
     data = []
     for year in years:
@@ -333,7 +333,7 @@ def crawler():
                 filename = "data_temperature_" + str(date) + ".csv"
                 data.append(pd.read_csv(file_temperature_path +str(filename)))
             except:
-                print date,"温度数据合并失败"
+                print date,u"温度数据合并失败"
     df = pd.DataFrame()
     for i in range(0, len(data)):
         df = df.append(data[i])
@@ -351,7 +351,7 @@ def convert_date(data):
         for year,month,day in zip(data['S_Year'],data['S_Month'],data['S_DAY']):
             result.append(str(int(year))+'/'+str(int(month))+'/'+str(int(day)))
     except:
-        print("日期数据转化为SDATE失败")
+        print u"日期数据转化为SDATE失败"
     return result
 
 #判断文件名中是否包含某个名称
@@ -449,41 +449,41 @@ def merge_all_data(df_temperature):
 
 def deal_data(data,df_temperature):
     if data_original_segmentation(data)==1:
-        print "原始文件切分完毕"
+        print u"原始文件切分完毕"
     if split_level_2_hour()==1:
-        print "2级设备文件的每小时的分类完毕"
+        print u"2级设备文件的每小时的分类完毕"
     else:
-        print "2级设备文件的每小时的分类失败"
+        print u"2级设备文件的每小时的分类失败"
         sys.exit()
     if split_level_4_hour()==1:
-        print "4级设备文件的每小时的分类完毕"
+        print u"4级设备文件的每小时的分类完毕"
     else:
-        print "4级设备文件的每小时的分类失败"
+        print u"4级设备文件的每小时的分类失败"
         sys.exit()
     if split_level_5_hour()==1:
-        print "5级设备文件的每小时的分类完毕"
+        print u"5级设备文件的每小时的分类完毕"
     else:
-        print "5级设备文件的每小时的分类失败"
+        print u"5级设备文件的每小时的分类失败"
         sys.exit()
     if split_level_2_day()==1:
-        print "2级设备文件的每天的分类完毕"
+        print u"2级设备文件的每天的分类完毕"
     else:
-        print "2级设备文件的每天的分类失败"
+        print u"2级设备文件的每天的分类失败"
         sys.exit()
     if split_level_4_day()==1:
-        print "4级设备文件的每天的分类完毕"
+        print u"4级设备文件的每天的分类完毕"
     else:
-        print "4级设备文件的每天的分类失败"
+        print u"4级设备文件的每天的分类失败"
         sys.exit()
     if split_level_5_day()==1:
-        print "5级设备文件的每天的分类完毕"
+        print u"5级设备文件的每天的分类完毕"
     else:
-        print "5级设备文件的每天的分类失败"
+        print u"5级设备文件的每天的分类失败"
         sys.exit()
     if merge_all_data(df_temperature)==1:
-        print "4级设备每天数据合并完毕"
+        print u"4级设备每天数据合并完毕"
     else:
-        print "4级设备每天数据合并失败"
+        print u"4级设备每天数据合并失败"
         sys.exit()
 
 
@@ -510,24 +510,24 @@ def model_select():
                                     0.7, 0.8, 0.9, 1.0]}
     model = GradientBoostingRegressor()
     kfold = KFold(n_splits=num_folds, random_state=seed)
-    print "算法开始调参，采用10折交叉验证"
+    print u"算法开始调参，采用10折交叉验证"
     grid = GridSearchCV(estimator=model, param_grid=param_grid, scoring=scoring, cv=kfold)
     grid_result = grid.fit(X=rescaledX, y=Y_train)
-    print('总模型中GBDT最优：%s 使用%s' % (grid_result.best_score_, grid_result.best_params_))
+    print(u'总模型中GBDT最优：%s 使用%s' % (grid_result.best_score_, grid_result.best_params_))
     end_time=dt.datetime.now()
     time=end_time-start_time
-    print "调参结束,耗时",time
-    print "进行总模型的训练"
+    print u"调参结束,耗时",time
+    print u"进行总模型的训练"
     # 训练模型
     scaler = StandardScaler().fit(X_train)
     rescaledX = scaler.transform(X_train)
     gbr = GradientBoostingRegressor(n_estimators=grid_result.best_params_['n_estimators'], min_samples_leaf=grid_result.best_params_['min_samples_leaf'], min_samples_split=grid_result.best_params_['min_samples_split'], learning_rate=grid_result.best_params_['learning_rate'])
     gbr.fit(X=rescaledX, y=Y_train)
-    print "总模型训练完毕"
+    print u"总模型训练完毕"
     model_file = file_path+"all_model.sav"
     with open(model_file, 'wb') as model_f:
         dump(gbr, model_f)
-    print "总模型保存完毕"
+    print u"总模型保存完毕"
 
 def summer_model_select():
     data=pd.read_csv(file_path+'data_all.csv')
@@ -553,24 +553,24 @@ def summer_model_select():
                                     0.7, 0.8, 0.9, 1.0]}
     model = GradientBoostingRegressor()
     kfold = KFold(n_splits=num_folds, random_state=seed)
-    print "算法开始调参，采用10折交叉验证"
+    print u"算法开始调参，采用10折交叉验证"
     grid = GridSearchCV(estimator=model, param_grid=param_grid, scoring=scoring, cv=kfold)
     grid_result = grid.fit(X=rescaledX, y=Y_train)
-    print('夏季模型中GBDT最优：%s 使用%s' % (grid_result.best_score_, grid_result.best_params_))
+    print(u'夏季模型中GBDT最优：%s 使用%s' % (grid_result.best_score_, grid_result.best_params_))
     end_time=dt.datetime.now()
     time=end_time-start_time
-    print "调参结束,耗时",time
-    print "进行夏季模型的训练"
+    print u"调参结束,耗时",time
+    print u"进行夏季模型的训练"
     # 训练模型
     scaler = StandardScaler().fit(X_train)
     rescaledX = scaler.transform(X_train)
     gbr = GradientBoostingRegressor(n_estimators=grid_result.best_params_['n_estimators'], min_samples_leaf=grid_result.best_params_['min_samples_leaf'], min_samples_split=grid_result.best_params_['min_samples_split'], learning_rate=grid_result.best_params_['learning_rate'])
     gbr.fit(X=rescaledX, y=Y_train)
-    print "夏季模型训练完毕"
+    print u"夏季模型训练完毕"
     model_file = file_path+"summer_model_new.sav"
     with open(model_file, 'wb') as model_f:
         dump(gbr, model_f)
-    print "夏季模型保存完毕"
+    print u"夏季模型保存完毕"
 
 def other_model_select():
     data=pd.read_csv(file_path+'data_all.csv')
@@ -596,31 +596,31 @@ def other_model_select():
                                     0.7, 0.8, 0.9, 1.0]}
     model = GradientBoostingRegressor()
     kfold = KFold(n_splits=num_folds, random_state=seed)
-    print "算法开始调参，采用10折交叉验证"
+    print u"算法开始调参，采用10折交叉验证"
     grid = GridSearchCV(estimator=model, param_grid=param_grid, scoring=scoring, cv=kfold)
     grid_result = grid.fit(X=rescaledX, y=Y_train)
-    print('秋冬模型中GBDT最优：%s 使用%s' % (grid_result.best_score_, grid_result.best_params_))
+    print(u'秋冬模型中GBDT最优：%s 使用%s' % (grid_result.best_score_, grid_result.best_params_))
     end_time=dt.datetime.now()
     time=end_time-start_time
-    print "调参结束,耗时",time
-    print "进行秋冬模型的训练"
+    print u"调参结束,耗时",time
+    print u"进行秋冬模型的训练"
     # 训练模型
     scaler = StandardScaler().fit(X_train)
     rescaledX = scaler.transform(X_train)
     gbr = GradientBoostingRegressor(n_estimators=grid_result.best_params_['n_estimators'], min_samples_leaf=grid_result.best_params_['min_samples_leaf'], min_samples_split=grid_result.best_params_['min_samples_split'], learning_rate=grid_result.best_params_['learning_rate'])
     gbr.fit(X=rescaledX, y=Y_train)
-    print "秋冬模型训练完毕"
+    print u"秋冬模型训练完毕"
     model_file = file_path+"other_model_new.sav"
     with open(model_file, 'wb') as model_f:
         dump(gbr, model_f)
-    print "秋冬模型保存完毕"
+    print u"秋冬模型保存完毕"
 
 def model_reconstruction():
     data = file_read()
     try:
         df_temperature = crawler()
     except:
-        print "爬虫失败"
+        print u"爬虫失败"
     deal_data(data, df_temperature)
     # summer_model_select()
     # other_model_select()

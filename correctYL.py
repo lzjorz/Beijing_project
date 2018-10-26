@@ -50,7 +50,7 @@ def is_valid_date(str):
         time.strptime(str, "%Y/%m/%d")
         return 1
     except:
-        print "输入日期错误,请重新输入："
+        print u"输入日期错误,请重新输入："
         return 0
 
 #模型数据标准化
@@ -75,7 +75,7 @@ def model_standand(data_scaler):
         scaler_other = StandardScaler().fit(X_scaler_other)
         return scaler_summer,scaler_other
     except:
-        print "模型标准化失败"
+        print u"模型标准化失败"
         sys.exit()
 
 
@@ -95,7 +95,7 @@ def model_predict(model_file,data,IsSummer,data_scaler_file):
                 predictions = loaded_model.predict(rescaledX_validation_other)
             return predictions
     except:
-        print "模型调用失败"
+        print u"模型调用失败"
         sys.exit()
 
 #纠正空调
@@ -105,11 +105,11 @@ def update_airconditioner(data,summer_model,other_model,data_scaler_file):
     data['SDATE'] = pd.to_datetime(data['SDATE'])
     try:
         if data['SDATE'][0].month == 5 or data['SDATE'][0].month == 6:
-            print "请输入打开空调的开始日期(输入日期要求:年/月/日 如:2018/6/1):"
+            print u"请输入打开空调的开始日期(输入日期要求:年/月/日 如:2018/6/1):"
             start_time = raw_input()
             while is_valid_date(start_time) == 0:
                 start_time = raw_input()
-            print "正在重新预测"
+            print u"正在重新预测"
             summer_data = data[data['SDATE'] >= start_time]
             other_data = data[data['SDATE'] < start_time]
             if len(summer_data) != 0:
@@ -118,11 +118,11 @@ def update_airconditioner(data,summer_model,other_model,data_scaler_file):
                 other_result = model_predict(other_model,other_data,0,data_scaler_file)
             return (np.append(summer_result,other_result))
         elif data['SDATE'][0].month == 9 or data['SDATE'][0].month == 10:
-            print "请输入关闭空调的日期(输入日期要求:年/月/日 如:2018/9/1):"
+            print u"请输入关闭空调的日期(输入日期要求:年/月/日 如:2018/9/1):"
             end_time = raw_input()
             while is_valid_date(end_time) == 0:
                 end_time = raw_input()
-            print "正在重新预测"
+            print u"正在重新预测"
             summer_data = data[data['SDATE'] < end_time]
             other_data = data[data['SDATE'] >= end_time]
             if len(summer_data) != 0:
@@ -131,7 +131,7 @@ def update_airconditioner(data,summer_model,other_model,data_scaler_file):
                 other_result = model_predict(other_model,other_data,0,data_scaler_file)
             return (np.append(summer_result,other_result))
     except:
-        print "纠错失败"
+        print u"纠错失败"
         sys.exit()
 
 #修改供暖时间
@@ -147,7 +147,7 @@ def correct_isHeating(data,start_date,end_date):
             else:
                 result.append(0)   
     except:
-        print("是否供暖参数设置失败")
+        print u"是否供暖参数设置失败"
         sys.exit()
     return result
 
@@ -157,26 +157,26 @@ def update_heating(data,model_file,data_scaler_file):
     data['SDATE'] = pd.to_datetime(data['SDATE'])
     try:
         if data['SDATE'][0].month == 11 or data['SDATE'][0].month == 12:
-            print "请输入供暖开始日期(输入日期要求:年/月/日 如:2018/11/1)："
+            print u"请输入供暖开始日期(输入日期要求:年/月/日 如:2018/11/1)："
             start_time = raw_input()
             while is_valid_date(start_time) == 0:
                 start_time = raw_input()
-            print "正在重新预测"
+            print u"正在重新预测"
             end_time_day = calendar.monthrange(data['SDATE'][0].year, data['SDATE'][0].month)[1]
             end_time = str(data['SDATE'][0].year)+str(data['SDATE'][0].month)+str(end_time_day)
             data['IsHeating']=correct_isHeating(data,start_time,end_time)
             result = model_predict(model_file,data,0,data_scaler_file)
         elif data['SDATE'][0].month == 3:
-            print "请输入供暖结束日期(输入日期要求:年/月/日 如:2018/3/1)："
+            print u"请输入供暖结束日期(输入日期要求:年/月/日 如:2018/3/1)："
             end_time = raw_input()
             while is_valid_date(end_time) == 0:
                 end_time = raw_input()
-            print "正在重新预测"
+            print u"正在重新预测"
             data['IsHeating']=correct_isHeating(data,data['SDATE'][0],end_time)
             result = model_predict(model_file,data,0,data_scaler_file)
         return result
     except:
-        print "纠错失败"
+        print u"纠错失败"
         sys.exit()
         
 #判断是否为春节期间
@@ -214,11 +214,11 @@ def update_SpringFestival(data,data_holiday_history,model_file,data_scaler_file)
     result = []
     try:
         if IsSpringFestival(data,date) == 1:
-            print "请输入本次数据中春节假期开始时间:(输入日期要求:年/月/日 如:2018/2/1):"
+            print u"请输入本次数据中春节假期开始时间:(输入日期要求:年/月/日 如:2018/2/1):"
             start_input = raw_input()
             while is_valid_date(start_input) == 0:
                 start_input = raw_input()
-            print "请输入本次数据中春节假期结束时间:(输入日期要求:年/月/日 如:2018/2/1):"
+            print u"请输入本次数据中春节假期结束时间:(输入日期要求:年/月/日 如:2018/2/1):"
             end_input = raw_input()
             while is_valid_date(end_input) == 0:
                 end_input = raw_input()
@@ -233,26 +233,26 @@ def update_SpringFestival(data,data_holiday_history,model_file,data_scaler_file)
             update_file(date_input,data_holiday_history)
         return result
     except:
-        print "纠错失败"
+        print u"纠错失败"
         sys.exit()
 
 #纠正程序
 def correct_YL():
-    print "请选择纠错项目："
-    print "纠错空调1"
-    print "纠错供暖2"
-    print "纠错春节3"
+    print u"请选择纠错项目："
+    print u"纠错空调1"
+    print u"纠错供暖2"
+    print u"纠错春节3"
     choose_num = input()
     if choose_num == 1:
         data = pd.read_csv(predict_file)
-        print "数据载入完成"
+        print u"数据载入完成"
         result = update_airconditioner(data,summer_model_file,other_model_file,data_scaler_file)
         if len(result) == 0:
-            print "无需重新预测"
+            print u"无需重新预测"
         else:
-            print "每日用电量的预测结果："
+            print u"每日用电量的预测结果："
             print result
-            print "总用电量:",sum(result)
+            print u"总用电量:",sum(result)
             # 将预测结果写入文件中
             new_df = pd.DataFrame()
             new_df['SDATE'] = data['SDATE']
@@ -264,11 +264,11 @@ def correct_YL():
         data = pd.read_csv(predict_file)
         result = update_heating(data,other_model_file,data_scaler_file)
         if len(result) == 0:
-            print "无需重新预测"
+            print u"无需重新预测"
         else:
-            print "每日用电量的预测结果："
+            print u"每日用电量的预测结果："
             print result
-            print "总用电量:",sum(result)
+            print u"总用电量:",sum(result)
             # 将预测结果写入文件中
             new_df = pd.DataFrame()
             new_df['SDATE'] = data['SDATE']
@@ -280,11 +280,11 @@ def correct_YL():
         data = pd.read_csv(predict_file)
         result = update_SpringFestival(data, data_holiday_history, other_model_file, data_scaler_file)
         if len(result) == 0:
-            print "无需重新预测"
+            print u"无需重新预测"
         else:
-            print "每日用电量的预测结果："
+            print u"每日用电量的预测结果："
             print result
-            print "总用电量:", sum(result)
+            print u"总用电量:", sum(result)
             # 将预测结果写入文件中
             new_df = pd.DataFrame()
             new_df['SDATE'] = data['SDATE']
@@ -293,7 +293,7 @@ def correct_YL():
             new_df.to_csv(result_file, index=False)
             show_picture(result, data['SDATE'])
     else:
-        print "输入的字符有误"
+        print u"输入的字符有误"
         sys.exit()
 
 if __name__ == '__main__':

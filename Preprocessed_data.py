@@ -77,7 +77,7 @@ def crawler(years,months):
 			try:
 				get_date(year,month)
 			except:
-				print "未爬下来的年为", year, "月为", month
+				print u"未爬下来的年为", year, "月为", month
 
 #获取当前日期以用以爬虫的时间获取
 def crawler_time():
@@ -183,13 +183,13 @@ def set_isHeating(data):
 			else:
 				date_autumn_to_winter = dt.datetime(data['SDATE'][0].year, data['SDATE'][0].month + 1, 1)
 		else:
-			print "供暖开始日期：", date_autumn_to_winter
+			print u"供暖开始日期：", date_autumn_to_winter
 	elif data['SDATE'][0].month in month_winter_to_spring:
 		date_winter_to_spring = temperature_judge_sdate(data)
 		if date_winter_to_spring is None:
 			date_winter_to_spring = dt.datetime(data['SDATE'][0].year, data['SDATE'][0].month + 1, 1)
 		else:
-			print "供暖结束日期：", date_winter_to_spring
+			print u"供暖结束日期：", date_winter_to_spring
 	
 	# 供暖月份
 	heating_month_list = []
@@ -220,7 +220,7 @@ def set_isHeating(data):
 			else:
 				result.append(0)
 	except:
-		print("是否供暖参数设置失败")
+		print(u"是否供暖参数设置失败")
 	return result
 
 #判断是否为在过年期间
@@ -247,8 +247,8 @@ def set_SpringFestival(data):
                 result.append(1)
             else:
                 result.append(0)
-		print "本次数据中春节放假开始日期:",start_time
-		print "本次数据中春节放假结束日期:",end_time
+		print u"本次数据中春节放假开始日期:",start_time
+		print u"本次数据中春节放假结束日期:",end_time
         return result
     else:
         return [0] * len(data['SDATE'])
@@ -259,10 +259,10 @@ def preprocfessed_data():
 		months=[]
 		years,months=crawler_time()
 		crawler(years,months)
-		print "爬取温度数据成功"
+		print u"爬取温度数据成功"
 	except:
-		print "爬取温度预报数据失败"
-	print "数据载入"
+		print u"爬取温度预报数据失败"
+	print u"数据载入"
 	holiday_df=pd.read_csv(file_holiday_path)
 	holiday_df['IsSpringFestival'] = set_SpringFestival(holiday_df)
 	try:
@@ -272,17 +272,17 @@ def preprocfessed_data():
 		holiday_all_df.drop_duplicates(inplace=True)
 		holiday_all_df.to_csv(file_all_holiday_path,index=False)
 	except:
-		print "新节假日数据粘贴失败"
-	print "数据载入完毕，开始进行数据合并"
+		print u"新节假日数据粘贴失败"
+	print u"数据载入完毕，开始进行数据合并"
 	holiday_df['SDATE']=pd.to_datetime(holiday_df['SDATE'])
 	df_temperature_report['SDATE']=pd.to_datetime(df_temperature_report['SDATE'])
 	final_df=pd.merge(holiday_df,df_temperature_report,on=['SDATE'])
 	final_df['IsHeating']=set_isHeating(final_df)
 	final_df['week_year']=set_week_year(final_df)
 	final_df['weekday']=set_weekday(final_df)
-	print "数据合并完毕"
+	print u"数据合并完毕"
 	final_df.to_csv(file_path,index=False)
-	print "数据输出完毕"
+	print u"数据输出完毕"
 
 if __name__ == '__main__':
 	preprocfessed_data()

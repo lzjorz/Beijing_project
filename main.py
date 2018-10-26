@@ -51,7 +51,7 @@ def get_month_p_max(month_number):
 		try:
 			data_all = pd.read_csv('d://Beijing_project/code/data_all.csv')
 		except:
-			print "读取功率总文件失败"
+			print u"读取功率总文件失败"
 		data_all['SDATE'] = pd.to_datetime(data_all['SDATE'])
 		month = []
 		year = []
@@ -108,9 +108,9 @@ def load_summer_model():
 	try:
 		with open(summer_model_file,'rb') as summer_model_f:
 			run_model=load(summer_model_f)
-		print "夏季模型载入成功"
+		print u"夏季模型载入成功"
 	except:
-		print "夏季模型载入失败"
+		print u"夏季模型载入失败"
 	return run_model
 
 #秋冬春模型载入
@@ -118,25 +118,25 @@ def load_other_model():
 	try:
 		with open(other_model_file,'rb') as other_model_f:
 			run_model=load(other_model_f)
-		print "春冬模型载入成功"
+		print u"春冬模型载入成功"
 	except:
-		print "春冬模型载入失败"
+		print u"春冬模型载入失败"
 	return run_model
 
 #载入模型并预测数据
 def run_the_model():
-	print "正在加载模型"
+	print u"正在加载模型"
 	#print "Please input the file path"
 	#file_path=input()
 	#print file_path
-	print "正在载入数据"
+	print u"正在载入数据"
 	try:
 		dataset=read_csv(file_path_run_model)
 		data_scaler=read_csv(data_scaler_file)
 		# print dataset.head(5)
-		print "数据载入成功"
+		print u"数据载入成功"
 	except:
-		print "数据载入失败"
+		print u"数据载入失败"
 		
 	#数据的标准化
 	data_scaler['SDATE']=pd.to_datetime(data_scaler['SDATE'])
@@ -162,10 +162,10 @@ def run_the_model():
 	X_validation = validation[
 		['IsHoliday', 'temperature_min', 'temperature_max', 'temperature_avg', 'IsHeating', 'week_year','IsSpringFestival','weekday']]
 	
-	print "夏季模型请输入1"
-	print "春冬模型请输入2"
-	print "夏秋换季模型请输入3"
-	print "春夏换季模型请输入4"
+	print u"夏季模型请输入1"
+	print u"春冬模型请输入2"
+	print u"夏秋换季模型请输入3"
+	print u"春夏换季模型请输入4"
 
 	#输入选择
 	choose_model_number=input()
@@ -179,7 +179,7 @@ def run_the_model():
 		predictions = model.predict(rescaledX_validation_other)
 	elif choose_model_number == 3:
 		summer_to_autumn_date=temperature_judge_sdate(dataset)
-		print "夏季到秋季关空调的时间为", summer_to_autumn_date
+		print u"夏季到秋季关空调的时间为", summer_to_autumn_date
 		validation['SDATE'] = pd.to_datetime(validation['SDATE'])
 		validation_summer = validation[validation['SDATE'] < pd.to_datetime(summer_to_autumn_date)]
 		validation_other = validation[validation['SDATE'] >= pd.to_datetime(summer_to_autumn_date)]
@@ -196,7 +196,7 @@ def run_the_model():
 		predictions=np.append(predictions_summer,predictions_other)
 	elif choose_model_number == 4:
 		spring_to_summer_date=temperature_judge_sdate(dataset)
-		print "春季到夏季开空调的时间为",spring_to_summer_date
+		print u"春季到夏季开空调的时间为",spring_to_summer_date
 		validation['SDATE'] = pd.to_datetime(validation['SDATE'])
 		validation_summer = validation[validation['SDATE'] >= pd.to_datetime(spring_to_summer_date)]
 		validation_other = validation[validation['SDATE'] < pd.to_datetime(spring_to_summer_date)]
@@ -212,17 +212,17 @@ def run_the_model():
 		predictions_other=model_other.predict(rescaledX_validation_other)
 		predictions=np.append(predictions_summer,predictions_other)
 	else:
-		print "输入数字错误，系统退出"
+		print u"输入数字错误，系统退出"
 		sys.exit()
 	
 	#得到功率最大值
 	dataset['SDATE']=pd.to_datetime(dataset['SDATE'])
 	p_max=get_month_p_max(dataset['SDATE'][5].month)
 	
-	print "最大功率为",p_max,"KW"
-	print "每日用电量的预测结果"
+	print u"最大功率为",p_max,"KW"
+	print u"每日用电量的预测结果"
 	print predictions
-	print "总电量为",predictions.sum()
+	print u"总电量为",predictions.sum()
 	
 	#将预测结果写入文件中
 	new_df=pd.DataFrame()
@@ -243,12 +243,12 @@ def run_the_model():
 
 #显示界面
 def show_print():
-	print "欢迎使用电力预测系统，请输入对应得字符来选择相应的功能"
-	print "1,预测数据处理（请自行设置放假时间，在IsHoliday.csv文件中，工作日为0，周六周日为1，三天及以上的假期为2，七天及以上的假期为3，过年期间的为4）"
-	print "2,使用数据载入模型并得到用电量的结果"
-	print "3,重载模型"
-	print "4,模型纠错"
-	print "5,系统退出"
+	print u"欢迎使用电力预测系统，请输入对应得字符来选择相应的功能"
+	print u"1,预测数据处理（请自行设置放假时间，在IsHoliday.csv文件中，工作日为0，周六周日为1，三天及以上的假期为2，七天及以上的假期为3，过年期间的为4）"
+	print u"2,使用数据载入模型并得到用电量的结果"
+	print u"3,重载模型"
+	print u"4,模型纠错"
+	print u"5,系统退出"
 	
 
 if __name__ == '__main__':
@@ -266,7 +266,7 @@ if __name__ == '__main__':
 		elif choose_number==5:
 			sys.exit()
 		else:
-			print "输入的数字有问题，请重新输入"
+			print u"输入的数字有问题，请重新输入"
 
 	#print choose_number
 	#print type(choose_number)
