@@ -622,8 +622,11 @@ def model_reconstruction():
     except:
         print u"爬虫失败"
     deal_data(data, df_temperature)
+    #夏季模型重构
     summer_model_select()
+    #秋冬模型重构
     other_model_select()
+    #重构出一个总模型
     #model_select()
 
 if __name__ == '__main__':
