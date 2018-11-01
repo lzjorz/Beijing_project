@@ -431,7 +431,7 @@ def merge_all_data(df_temperature):
     data_all['SDATE'] = convert_date(data_all)
     data_all['week_year'] = set_week_year(data_all)
     data_all['IsHeating'] = set_isHeating(file_level5_split_day_path,heating_file_list)
-    data_all['weekday'] = set_week_year(data_all)
+    data_all['weekday'] = set_weekday(data_all)
     df_temperature['SDATE'] = pd.to_datetime(df_temperature['SDATE'])
     data_temp = pd.merge(data_all,df_temperature,on=['SDATE'])
     data_all['temperature_max'] = data_temp['temperature_max']
@@ -622,8 +622,8 @@ def model_reconstruction():
     except:
         print u"爬虫失败"
     deal_data(data, df_temperature)
-    # summer_model_select()
-    # other_model_select()
+    summer_model_select()
+    other_model_select()
     #model_select()
 
 if __name__ == '__main__':
